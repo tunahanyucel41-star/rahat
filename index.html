@@ -1,1 +1,1353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Rahatlatan Dualar</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: Georgia, "Times New Roman", serif;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(30, 48, 105, .42),
+            transparent 45%
+        ),
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(255, 100, 180, .10),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 80% 75%,
+            rgba(255, 100, 180, .08),
+            transparent 30%
+        ),
+        #020714;
+
+    color: #f8dce9;
+}
+
+/* Karanlık sinematik kenarlar */
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            transparent 45%,
+            rgba(0,0,0,.62) 100%
+        );
+
+    z-index: 50;
+}
+
+/* =====================================================
+   YOUTUBE OYNATICI
+===================================================== */
+
+#youtubePlayer {
+    position: fixed;
+
+    width: 1px;
+    height: 1px;
+
+    left: -10px;
+    bottom: -10px;
+
+    opacity: 0.01;
+
+    pointer-events: none;
+
+    z-index: -10;
+}
+
+/* =====================================================
+   YILDIZLAR
+===================================================== */
+
+#stars {
+    position: fixed;
+    inset: 0;
+
+    z-index: 1;
+
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 6px white,
+        0 0 12px rgba(255,255,255,.6);
+
+    animation:
+        twinkle var(--twinkle-time)
+        ease-in-out infinite;
+
+    animation-delay: var(--delay);
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: .15;
+        transform: scale(.6);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+}
+
+/* =====================================================
+   PEMBE SEDEF
+===================================================== */
+
+#pearls {
+    position: fixed;
+    inset: 0;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+.pearl {
+    position: absolute;
+
+    width: var(--size);
+    height: var(--size);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            white 0%,
+            #ffe0ef 15%,
+            #f6a9cf 42%,
+            #b44d88 72%,
+            transparent 100%
+        );
+
+    opacity: var(--opacity);
+
+    box-shadow:
+        0 0 8px rgba(255,160,210,.9),
+        0 0 20px rgba(255,80,180,.35);
+
+    animation:
+        pearlFloat var(--duration)
+        ease-in-out infinite;
+
+    animation-delay: var(--delay);
+}
+
+@keyframes pearlFloat {
+
+    0%,
+    100% {
+        transform:
+            translate(0,0);
+    }
+
+    50% {
+        transform:
+            translate(
+                var(--move-x),
+                var(--move-y)
+            );
+    }
+}
+
+/* =====================================================
+   YILDIZ HARİTASI
+===================================================== */
+
+.constellation {
+    position: fixed;
+
+    width: 650px;
+    height: 650px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 2;
+
+    opacity: .27;
+
+    pointer-events: none;
+}
+
+.constellation::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 5%;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(255,190,225,.15);
+
+    box-shadow:
+        0 0 50px
+        rgba(255,100,190,.06),
+
+        inset 0 0 60px
+        rgba(255,100,190,.04);
+}
+
+.constellation svg {
+    width: 100%;
+    height: 100%;
+}
+
+.constellation line {
+    stroke:
+        rgba(255,188,220,.42);
+
+    stroke-width: 1;
+}
+
+.constellation circle {
+    fill: white;
+
+    filter:
+        drop-shadow(
+            0 0 6px
+            #ffb5dc
+        );
+}
+
+/* =====================================================
+   SAYFALAR
+===================================================== */
+
+.page {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 10;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    flex-direction: column;
+
+    padding: 30px;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        scale(1.035);
+
+    transition:
+        opacity 1s ease,
+        transform 1s ease,
+        visibility 1s;
+}
+
+.page.active {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        scale(1);
+}
+
+/* =====================================================
+   İLK SAYFA
+===================================================== */
+
+.intro {
+    text-align: center;
+}
+
+.intro h1 {
+
+    color: #f7c4dc;
+
+    font-size:
+        clamp(30px, 4.5vw, 58px);
+
+    font-weight: 400;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 55px;
+
+    text-shadow:
+        0 0 12px
+        rgba(255,164,205,.55),
+
+        0 0 45px
+        rgba(255,80,170,.22);
+
+    animation:
+        titleBreath 4s
+        ease-in-out infinite;
+}
+
+@keyframes titleBreath {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 10px
+            rgba(255,164,205,.4);
+    }
+
+    50% {
+        text-shadow:
+            0 0 18px
+            rgba(255,164,205,.7),
+
+            0 0 55px
+            rgba(255,80,170,.3);
+    }
+}
+
+/* =====================================================
+   BUTON
+===================================================== */
+
+button {
+
+    border: none;
+
+    outline: none;
+
+    cursor: pointer;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    color: #3b1029;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe3ef,
+            #f2b1d0,
+            #ffd8e9
+        );
+
+    padding:
+        18px 38px;
+
+    border-radius:
+        50px;
+
+    font-size: 18px;
+
+    letter-spacing: .4px;
+
+    box-shadow:
+        0 0 18px
+        rgba(255,157,207,.38),
+
+        0 0 50px
+        rgba(255,80,180,.12);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+button:hover {
+
+    transform:
+        translateY(-4px)
+        scale(1.035);
+
+    box-shadow:
+        0 0 30px
+        rgba(255,157,207,.65),
+
+        0 0 80px
+        rgba(255,80,180,.25);
+}
+
+button:active {
+
+    transform:
+        scale(.95);
+}
+
+/* =====================================================
+   DUA SAYFALARI
+===================================================== */
+
+.prayer-page {
+    text-align: center;
+}
+
+.prayer-box {
+
+    width:
+        min(920px, 92vw);
+
+    max-height:
+        72vh;
+
+    overflow-y:
+        auto;
+
+    padding:
+        38px 42px;
+
+    margin-bottom:
+        35px;
+
+    border-radius:
+        25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(20,25,58,.66),
+            rgba(7,12,32,.78)
+        );
+
+    border:
+        1px solid
+        rgba(255,181,215,.14);
+
+    box-shadow:
+        0 0 60px
+        rgba(255,90,180,.08),
+
+        inset 0 0 50px
+        rgba(255,255,255,.015);
+
+    backdrop-filter:
+        blur(10px);
+}
+
+.prayer-box::-webkit-scrollbar {
+    width: 4px;
+}
+
+.prayer-box::-webkit-scrollbar-thumb {
+
+    background:
+        #d985b0;
+
+    border-radius:
+        10px;
+}
+
+.prayer-text {
+
+    color:
+        #f8dce8;
+
+    font-size:
+        clamp(17px, 1.65vw, 22px);
+
+    line-height:
+        1.9;
+
+    letter-spacing:
+        .2px;
+
+    text-shadow:
+        0 0 10px
+        rgba(255,200,220,.08);
+}
+
+/* =====================================================
+   KALP SAYFASI
+===================================================== */
+
+#heartPage {
+    overflow: hidden;
+}
+
+.heart-scene {
+
+    position: absolute;
+
+    inset: 0;
+
+    overflow: hidden;
+}
+
+/* =====================================================
+   KALPLER
+===================================================== */
+
+.heart {
+
+    position: absolute;
+
+    bottom:
+        -90px;
+
+    color:
+        #ff2448;
+
+    font-size:
+        var(--heart-size);
+
+    opacity:
+        0;
+
+    filter:
+        drop-shadow(
+            0 0 7px
+            rgba(255,20,55,.85)
+        )
+        drop-shadow(
+            0 0 25px
+            rgba(255,20,55,.35)
+        );
+
+    animation:
+        heartRise
+        var(--rise-time)
+        linear
+        forwards;
+}
+
+@keyframes heartRise {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            translateY(0)
+            translateX(0)
+            rotate(0deg)
+            scale(.35);
+    }
+
+    10% {
+        opacity: .95;
+    }
+
+    50% {
+
+        transform:
+            translateY(-55vh)
+            translateX(var(--drift))
+            rotate(180deg)
+            scale(1);
+    }
+
+    90% {
+        opacity: .85;
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            translateY(-125vh)
+            translateX(
+                calc(var(--drift) * -1)
+            )
+            rotate(360deg)
+            scale(.7);
+    }
+}
+
+/* =====================================================
+   KALPLERİN ALTTAN YUKARI SİLİNMESİ
+===================================================== */
+
+.heart-scene.erasing .heart {
+
+    animation:
+        eraseHeart
+        1.9s
+        cubic-bezier(.7,0,.3,1)
+        forwards;
+}
+
+@keyframes eraseHeart {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+        filter:
+            blur(0)
+            drop-shadow(
+                0 0 10px
+                rgba(255,20,55,.8)
+            );
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            translateY(-100px)
+            scale(.05);
+
+        filter:
+            blur(14px);
+    }
+}
+
+/* =====================================================
+   SON AMİN
+===================================================== */
+
+.final-amin {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    color:
+        #ffd9e9;
+
+    font-size:
+        clamp(48px, 7vw, 90px);
+
+    letter-spacing:
+        3px;
+
+    text-shadow:
+
+        0 0 18px
+        rgba(255,150,195,.8),
+
+        0 0 55px
+        rgba(255,70,150,.35);
+
+    transform:
+        scale(.92);
+
+    transition:
+        opacity 2s ease,
+        transform 2s ease;
+}
+
+.final-amin.show {
+
+    opacity: 1;
+
+    transform:
+        scale(1);
+}
+
+/* =====================================================
+   MOBİL
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .constellation {
+
+        width: 430px;
+        height: 430px;
+    }
+
+    .intro h1 {
+
+        font-size:
+            30px;
+
+        max-width:
+            340px;
+
+        margin-bottom:
+            42px;
+    }
+
+    .prayer-box {
+
+        padding:
+            25px 22px;
+
+        max-height:
+            70vh;
+    }
+
+    .prayer-text {
+
+        font-size:
+            16px;
+
+        line-height:
+            1.75;
+    }
+
+    button {
+
+        font-size:
+            16px;
+
+        padding:
+            16px 29px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     YOUTUBE
+===================================================== -->
+
+<div id="youtubePlayer"></div>
+
+<!-- =====================================================
+     YILDIZLAR
+===================================================== -->
+
+<div id="stars"></div>
+
+<!-- =====================================================
+     PEMBE SEDEF
+===================================================== -->
+
+<div id="pearls"></div>
+
+<!-- =====================================================
+     YILDIZ HARİTASI
+===================================================== -->
+
+<div class="constellation">
+
+<svg viewBox="0 0 650 650">
+
+    <line x1="120" y1="190" x2="210" y2="120"/>
+    <line x1="210" y1="120" x2="330" y2="180"/>
+    <line x1="330" y1="180" x2="410" y2="100"/>
+    <line x1="410" y1="100" x2="510" y2="210"/>
+    <line x1="510" y1="210" x2="430" y2="310"/>
+    <line x1="430" y1="310" x2="530" y2="420"/>
+    <line x1="530" y1="420" x2="400" y2="490"/>
+    <line x1="400" y1="490" x2="300" y2="420"/>
+    <line x1="300" y1="420" x2="210" y2="500"/>
+    <line x1="210" y1="500" x2="120" y2="390"/>
+    <line x1="120" y1="390" x2="180" y2="280"/>
+    <line x1="180" y1="280" x2="120" y2="190"/>
+
+    <circle cx="120" cy="190" r="4"/>
+    <circle cx="210" cy="120" r="3"/>
+    <circle cx="330" cy="180" r="4"/>
+    <circle cx="410" cy="100" r="3"/>
+    <circle cx="510" cy="210" r="4"/>
+    <circle cx="430" cy="310" r="3"/>
+    <circle cx="530" cy="420" r="4"/>
+    <circle cx="400" cy="490" r="3"/>
+    <circle cx="300" cy="420" r="4"/>
+    <circle cx="210" cy="500" r="3"/>
+    <circle cx="120" cy="390" r="4"/>
+    <circle cx="180" cy="280" r="3"/>
+
+</svg>
+
+</div>
+
+<!-- =====================================================
+     SAYFA 1
+===================================================== -->
+
+<section
+    class="page intro active"
+    id="page1"
+>
+
+    <h1>
+        rahatlatan dualara hazır mısın
+    </h1>
+
+    <button onclick="beginExperience()">
+        evet gönder gelsin
+    </button>
+
+</section>
+
+<!-- =====================================================
+     SAYFA 2
+===================================================== -->
+
+<section
+    class="page prayer-page"
+    id="page2"
+>
+
+    <div class="prayer-box">
+
+        <p class="prayer-text">
+
+Allah’ım, arkadaşımın karşısına hayırlı, helalinden ve gönlüne huzur verecek güzel bir iş çıkar. Emeklerinin karşılığını almayı, rızkının genişlemesini ve çalıştığı yerde değer görmesini nasip et. Önündeki engelleri kaldır, işlerini kolaylaştır, ona doğru kararları verecek akıl ve cesareti ver. Ailesine sağlık ve huzur, sevdiklerine mutluluk, hayatına bereket nasip et. Allah’ım, onu kötü niyetli insanlardan ve güvenini boşa çıkaracak kişilerden koru. Karşısına samimi dostlar, güzel insanlar ve güvenebileceği kişiler çıkar. Kalbine huzur, kendisine öz güven ve güç ver; zor zamanlarında sabrını, güzel zamanlarında şükrünü artır. Sevgiyle çevrili, ailesiyle ve dostlarıyla mutlu, gönlü rahat ve yolu açık bir hayat nasip et. Hakkında hayırlı olan ne varsa onu karşısına çıkar ve nasiplerini güzelleştir. Âmin.
+
+        </p>
+
+    </div>
+
+    <button onclick="goToPage(3)">
+        Amin
+    </button>
+
+</section>
+
+<!-- =====================================================
+     SAYFA 3
+===================================================== -->
+
+<section
+    class="page prayer-page"
+    id="page3"
+>
+
+    <div class="prayer-box">
+
+        <p class="prayer-text">
+
+Allah’ım, arkadaşımın gönlünden geçen, diliyle söylediği ve kimseye anlatamadığı bütün güzel dualarını Sen işit ve bilirsin. Hakkında hayırlı olan dualarını en güzel zamanda, en güzel şekilde kabul eyle. Beklediği kapıları hayırla aç, gönlündeki dileklerini nasip et; eğer istediği şey onun için hayırlı değilse, gönlünü incitmeden ondan uzaklaştır ve yerine çok daha hayırlısını nasip eyle.
+
+Allah’ım, ettiği duaları karşılıksız bırakma; umutlarını hayra, bekleyişlerini güzel haberlere, sıkıntılarını ferahlığa çevir. Ailesi, dostları, sevdikleri, işi, geleceği ve gönlü hakkında ettiği bütün hayırlı duaları kabul eyle. Ona sabırla beklemeyi, nasip olduğunda şükretmeyi ve her şeyin Senin takdirinle en güzel şekilde gerçekleşeceğine inanmayı nasip et. Dualarını hayırlısıyla kabul eyle, gönlünü huzurla dold. Âmin.
+
+        </p>
+
+    </div>
+
+    <button onclick="startHeartScene()">
+        Amin
+    </button>
+
+</section>
+
+<!-- =====================================================
+     SON SAHNE
+===================================================== -->
+
+<section
+    class="page"
+    id="heartPage"
+>
+
+    <div
+        class="heart-scene"
+        id="heartScene"
+    ></div>
+
+    <div
+        class="final-amin"
+        id="finalAmin"
+    >
+        Amin 🤲
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+/* =====================================================
+   YOUTUBE API
+===================================================== */
+
+let player;
+
+let youtubeReady = false;
+
+
+/*
+   YouTube IFrame API yükleniyor.
+*/
+
+const youtubeScript =
+    document.createElement("script");
+
+youtubeScript.src =
+    "https://www.youtube.com/iframe_api";
+
+document
+    .head
+    .appendChild(youtubeScript);
+
+
+/*
+   YouTube hazır olduğunda bu fonksiyon
+   YouTube tarafından otomatik çağrılır.
+*/
+
+function onYouTubeIframeAPIReady() {
+
+    player =
+        new YT.Player(
+            "youtubePlayer",
+            {
+
+                height: "1",
+
+                width: "1",
+
+                videoId:
+                    "w3GnTT90544",
+
+                playerVars: {
+
+                    autoplay: 0,
+
+                    controls: 0,
+
+                    disablekb: 1,
+
+                    fs: 0,
+
+                    modestbranding: 1,
+
+                    rel: 0,
+
+                    playsinline: 1
+                },
+
+                events: {
+
+                    onReady: function () {
+
+                        youtubeReady = true;
+
+                    }
+                }
+            }
+        );
+}
+
+
+/* =====================================================
+   İLK BUTON
+===================================================== */
+
+function beginExperience() {
+
+    /*
+       Kullanıcının butona bastığı anda
+       şarkıyı başlat.
+    */
+
+    if (
+        youtubeReady &&
+        player
+    ) {
+
+        player.playVideo();
+
+    }
+
+    goToPage(2);
+}
+
+
+/* =====================================================
+   SAYFA DEĞİŞTİR
+===================================================== */
+
+function goToPage(number) {
+
+    document
+        .querySelectorAll(".page")
+        .forEach(
+            page =>
+                page.classList.remove("active")
+        );
+
+    document
+        .getElementById(
+            "page" + number
+        )
+        .classList.add("active");
+}
+
+
+/* =====================================================
+   YILDIZLARI OLUŞTUR
+===================================================== */
+
+const stars =
+    document.getElementById("stars");
+
+for (
+    let i = 0;
+    i < 190;
+    i++
+) {
+
+    const star =
+        document.createElement("div");
+
+    star.className =
+        "star";
+
+    star.style.left =
+        Math.random() * 100 + "%";
+
+    star.style.top =
+        Math.random() * 100 + "%";
+
+    const size =
+        Math.random() * 2 + 1;
+
+    star.style.width =
+        size + "px";
+
+    star.style.height =
+        size + "px";
+
+    star.style.setProperty(
+        "--delay",
+        Math.random() * 5 + "s"
+    );
+
+    star.style.setProperty(
+        "--twinkle-time",
+        2 + Math.random() * 5 + "s"
+    );
+
+    stars.appendChild(star);
+}
+
+
+/* =====================================================
+   PEMBE SEDEFLER
+===================================================== */
+
+const pearls =
+    document.getElementById("pearls");
+
+for (
+    let i = 0;
+    i < 75;
+    i++
+) {
+
+    const pearl =
+        document.createElement("div");
+
+    pearl.className =
+        "pearl";
+
+    pearl.style.left =
+        Math.random() * 100 + "%";
+
+    pearl.style.top =
+        Math.random() * 100 + "%";
+
+    pearl.style.setProperty(
+        "--size",
+        Math.random() * 5 + 2 + "px"
+    );
+
+    pearl.style.setProperty(
+        "--opacity",
+        Math.random() * .65 + .25
+    );
+
+    pearl.style.setProperty(
+        "--duration",
+        5 + Math.random() * 8 + "s"
+    );
+
+    pearl.style.setProperty(
+        "--delay",
+        Math.random() * 6 + "s"
+    );
+
+    pearl.style.setProperty(
+        "--move-x",
+        Math.random() * 30 - 15 + "px"
+    );
+
+    pearl.style.setProperty(
+        "--move-y",
+        Math.random() * 40 - 20 + "px"
+    );
+
+    pearls.appendChild(pearl);
+}
+
+
+/* =====================================================
+   İKİNCİ AMİN
+===================================================== */
+
+function startHeartScene() {
+
+    /*
+       ÖNCE ŞARKIYI KES
+    */
+
+    if (
+        youtubeReady &&
+        player
+    ) {
+
+        player.stopVideo();
+
+    }
+
+
+    /*
+       Sayfa 4
+    */
+
+    document
+        .querySelectorAll(".page")
+        .forEach(
+            page =>
+                page.classList.remove("active")
+        );
+
+    document
+        .getElementById("heartPage")
+        .classList.add("active");
+
+
+    const scene =
+        document.getElementById(
+            "heartScene"
+        );
+
+    const finalAmin =
+        document.getElementById(
+            "finalAmin"
+        );
+
+
+    scene.innerHTML = "";
+
+    scene.classList.remove(
+        "erasing"
+    );
+
+    finalAmin.classList.remove(
+        "show"
+    );
+
+
+    /*
+       10 saniye boyunca kalp üret
+    */
+
+    const heartInterval =
+        setInterval(
+            createHeart,
+            85
+        );
+
+
+    /*
+       10 saniyenin sonunda
+       yeni kalp üretmeyi bırak.
+    */
+
+    setTimeout(
+        function () {
+
+            clearInterval(
+                heartInterval
+            );
+
+
+            /*
+               Bir saniye daha
+               yükseliş hissi.
+            */
+
+            setTimeout(
+                function () {
+
+                    /*
+                       Alttan yukarı
+                       silinme başlıyor.
+                    */
+
+                    scene.classList.add(
+                        "erasing"
+                    );
+
+
+                    /*
+                       Silinme tamamen bitiyor.
+                    */
+
+                    setTimeout(
+                        function () {
+
+                            scene.style.display =
+                                "none";
+
+                            finalAmin.classList.add(
+                                "show"
+                            );
+
+                        },
+                        2000
+                    );
+
+                },
+                1000
+            );
+
+        },
+        10000
+    );
+}
+
+
+/* =====================================================
+   KALP OLUŞTUR
+===================================================== */
+
+function createHeart() {
+
+    const heart =
+        document.createElement("div");
+
+    heart.className =
+        "heart";
+
+    heart.innerHTML =
+        "♥";
+
+
+    /*
+       Yatay konum
+    */
+
+    heart.style.left =
+        Math.random() * 100 + "%";
+
+
+    /*
+       Kalp boyutu
+    */
+
+    heart.style.setProperty(
+        "--heart-size",
+        15 + Math.random() * 32 + "px"
+    );
+
+
+    /*
+       Farklı yükselme hızları
+    */
+
+    heart.style.setProperty(
+        "--rise-time",
+        7 + Math.random() * 6 + "s"
+    );
+
+
+    /*
+       Sağa sola süzülme
+    */
+
+    heart.style.setProperty(
+        "--drift",
+        Math.random() * 180 - 90 + "px"
+    );
+
+
+    /*
+       Sahneye ekle
+    */
+
+    document
+        .getElementById(
+            "heartScene"
+        )
+        .appendChild(heart);
+
+
+    /*
+       Çok eski kalpleri temizle.
+    */
+
+    setTimeout(
+        function () {
+
+            if (
+                heart.parentNode
+            ) {
+
+                heart.remove();
+
+            }
+
+        },
+        15000
+    );
+}
+
+</script>
+
+</body>
+</html>
